@@ -1,6 +1,6 @@
 package dto;
 
-public class Product {
+public class Offer {
     private String name;
     private String brand;
     private String color;
@@ -8,7 +8,7 @@ public class Product {
     private String description;
     private String articleId;
 
-    public Product(String name, String brand, String color, String price, String description, String articleId) {
+    public Offer(String name, String brand, String color, String price, String description, String articleId) {
         this.name = name;
         this.brand = brand;
         this.color = color;
@@ -67,7 +67,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
+        return "Offer{" +
                 "name='" + name + '\'' +
                 ", brand='" + brand + '\'' +
                 ", color='" + color + '\'' +

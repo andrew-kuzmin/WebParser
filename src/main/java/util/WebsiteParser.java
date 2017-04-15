@@ -1,6 +1,6 @@
 package util;
 
-import dto.Product;
+import dto.Offer;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,9 +18,9 @@ public class WebsiteParser {
     private static final String USER_AGENT =
             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1";
     private Document htmlDocument;
-    private List<String> productLinks = new ArrayList<>();
-    private List<String> searchPagesLinks = new ArrayList<>();
-    private List<Product> products = new ArrayList<>();
+    private List<String> offerLinks = new ArrayList<>();
+    private List<Document> searchPagesDocuments = new ArrayList<>();
+    private List<Offer> offers = new ArrayList<>();
     private int requestsAmount;
 
     {
@@ -55,15 +55,15 @@ public class WebsiteParser {
                 return false;
             }
 
-            collectSearchPagesLinks(url, htmlDocument);
-            for (String link : this.searchPagesLinks){
-                collectProductLinks(getHtmlDocument(link));
+            collectSearchPagesDocuments(url, htmlDocument);
+            for (Document doc : this.searchPagesDocuments){
+                collectOfferLinks(doc);
             }
 
-            parseProducts();
+            parseOffers();
             clearData();
 
-//            this.products.forEach(System.out::println);
+//            this.offers.forEach(System.out::println);
 
 
             return true;
@@ -87,21 +87,25 @@ public class WebsiteParser {
         return pageReferences;
     }
 
-    private void collectProductLinks(Document htmlDocument){
+    private void collectOfferLinks(Document htmlDocument){
         Elements articles = htmlDocument.getElementsByTag("article");
         for (Element article : articles){
             String href = article.getElementsByTag("a").get(0).attr("href");
-            this.productLinks.add("https://www.aboutyou.de" + href);
+            this.offerLinks.add("https://www.aboutyou.de" + href);
         }
     }
 
-    private void collectSearchPagesLinks(String url, Document htmlDocument){
-        this.searchPagesLinks.add(url);
-        this.searchPagesLinks.addAll(getSearchPagesReferences(htmlDocument));
+    private void collectSearchPagesDocuments(String url, Document htmlDocument) throws IOException{
+        this.searchPagesDocuments.add(htmlDocument);
+        List<String> searchPagesReferences = getSearchPagesReferences(htmlDocument);
+        for (String ref : searchPagesReferences){
+            this.searchPagesDocuments.add(getHtmlDocument(ref));
+        }
+//        searchPagesReferences.forEach(ref -> this.searchPagesDocuments.add(getHtmlDocument(ref)));
     }
 
-    private void parseProducts() throws IOException{
-        for (String link : this.productLinks) {
+    private void parseOffers() throws IOException{
+        for (String link : this.offerLinks) {
             Document htmlDocument = getHtmlDocument(link);
             String price = getAttributeValue(htmlDocument.getElementsByAttributeValue("property", "og:price:amount"), ArrayList::isEmpty);
             String brand = getAttributeValue(htmlDocument.getElementsByAttributeValue("property", "og:brand"), ArrayList::isEmpty);
@@ -109,7 +113,7 @@ public class WebsiteParser {
             String color = getAttributeValue(htmlDocument.getElementsByAttributeValue("property", "product:color"), ArrayList::isEmpty);
             String description = getAttributeValue(htmlDocument.getElementsByAttributeValue("property", "og:description"), ArrayList::isEmpty);
             String name = getAttributeValue(htmlDocument.getElementsByAttributeValue("property", "og:title"), ArrayList::isEmpty);
-            this.products.add(new Product(name, brand, color, price, description, id));
+            this.offers.add(new Offer(name, brand, color, price, description, id));
         }
     }
 
@@ -128,17 +132,17 @@ public class WebsiteParser {
         return htmlDocument;
     }
 
-    public List<String> getProductLinks() {
-        return this.productLinks;
+    public List<String> getOfferLinks() {
+        return this.offerLinks;
     }
 
     public int getRequestsAmount() { return this.requestsAmount; }
 
-    public int getProductsAmount() { return this.products.size(); }
+    public int getOffersAmount() { return this.offers.size(); }
 
     private void clearData() {
-        this.searchPagesLinks.clear();
-        this.productLinks.clear();
+        this.searchPagesDocuments.clear();
+        this.offerLinks.clear();
     }
 
 

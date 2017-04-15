@@ -6,8 +6,7 @@ public class SearchEngine {
 
     private List<String> searchReferences = new ArrayList<>();
     private int requestAmount;
-    private int productsAmount;
-
+    private int offersAmount;
 
     /**
      * @param keyword - The keyword for searching
@@ -17,7 +16,7 @@ public class SearchEngine {
         WebsiteParser parser = new WebsiteParser();
         this.searchReferences.forEach(parser::parse);
         this.requestAmount = parser.getRequestsAmount();
-        this.productsAmount = parser.getProductsAmount();
+        this.offersAmount = parser.getOffersAmount();
     }
 
     public int getRequestsAmount() {
@@ -25,7 +24,7 @@ public class SearchEngine {
     }
 
     public int getProductsAmount() {
-        return this.productsAmount;
+        return this.offersAmount;
     }
 
     private void createReferences(String keyword) {
