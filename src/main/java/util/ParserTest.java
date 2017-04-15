@@ -15,8 +15,8 @@ public class ParserTest {
         long totalTime = endTime - startTime;
         System.out.println();
         System.out.println("Amount of triggered HTTP request : " + searchEngine.getRequestsAmount());
-        System.out.println("Total memory : " + Runtime.getRuntime().totalMemory() / 1024L);
-        System.out.println("Amount of extracted products : " + searchEngine.getProductsAmount());
+        System.out.println("Used memory : " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024L + " KB");
+        System.out.println("Amount of extracted products : " + searchEngine.getOffersAmount());
         System.out.println("Run-time : " + (totalTime/1000d) + " seconds" );
 
     }

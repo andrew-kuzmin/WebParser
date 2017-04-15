@@ -23,7 +23,7 @@ public class SearchEngine {
         return this.requestAmount;
     }
 
-    public int getProductsAmount() {
+    public int getOffersAmount() {
         return this.offersAmount;
     }
 

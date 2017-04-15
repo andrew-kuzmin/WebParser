@@ -19,6 +19,13 @@
             <artifactId>jsoup</artifactId>
             <version>1.10.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.jcabi.incubator/xembly -->
+        <dependency>
+            <groupId>com.jcabi.incubator</groupId>
+            <artifactId>xembly</artifactId>
+            <version>0.22</version>
+        </dependency>
+
 
     </dependencies>
 
