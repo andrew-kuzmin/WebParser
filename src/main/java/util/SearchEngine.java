@@ -4,31 +4,37 @@ import java.util.*;
 
 public class SearchEngine {
 
-    private List<String> searchRefences = new ArrayList<>();
+    private List<String> searchReferences = new ArrayList<>();
+    private int requestAmount;
+    private int productsAmount;
 
 
     /**
-     *
-     *
-     * @param keyword
-     *            - The keyword for searching
-
+     * @param keyword - The keyword for searching
      */
-    public void search(String keyword)
-    {
-            createReferences(keyword);
-            WebsiteParser parser = new WebsiteParser();
-        // Lots of stuff happening here. Look at the parse method in
-        this.searchRefences.forEach(parser::parse);
-            // SpiderLeg
-
+    public void search(String keyword) {
+        createReferences(keyword);
+        WebsiteParser parser = new WebsiteParser();
+        this.searchReferences.forEach(parser::parse);
+        this.requestAmount = parser.getRequestsAmount();
+        this.productsAmount = parser.getProductsAmount();
     }
 
-    private void createReferences(String keyword){
+    public int getRequestsAmount() {
+        return this.requestAmount;
+    }
+
+    public int getProductsAmount() {
+        return this.productsAmount;
+    }
+
+    private void createReferences(String keyword) {
         String searchReferenceForWomen = "https://www.aboutyou.de/suche?term=" + keyword + "&category=20201";
         String searchReferenceForMen = "https://www.aboutyou.de/suche?term=" + keyword + "&category=20202";
-        this.searchRefences.add(searchReferenceForMen);
-        this.searchRefences.add(searchReferenceForWomen);
+        String searchReferenceForChildren = "https://www.aboutyou.de/suche?term=" + keyword + "&category=138113";
+        this.searchReferences.add(searchReferenceForMen);
+        this.searchReferences.add(searchReferenceForWomen);
+        this.searchReferences.add(searchReferenceForChildren);
     }
 
 }

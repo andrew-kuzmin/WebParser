@@ -21,7 +21,11 @@ public class WebsiteParser {
     private List<String> productLinks = new ArrayList<>();
     private List<String> searchPagesLinks = new ArrayList<>();
     private List<Product> products = new ArrayList<>();
+    private int requestsAmount;
 
+    {
+        this.requestsAmount = 0;
+    }
 
     /**
      * This performs all the work. It makes an HTTP request, checks the response, and then gathers
@@ -34,6 +38,7 @@ public class WebsiteParser {
         try {
             Connection connection = Jsoup.connect(url).userAgent(USER_AGENT);
             Document htmlDocument = connection.get();
+            this.requestsAmount++;
             this.htmlDocument = htmlDocument;
             if (connection.response().statusCode() == 200)
             {
@@ -56,8 +61,9 @@ public class WebsiteParser {
             }
 
             parseProducts();
+            clearData();
 
-            this.products.forEach(System.out::println);
+//            this.products.forEach(System.out::println);
 
 
             return true;
@@ -104,7 +110,6 @@ public class WebsiteParser {
             String description = getAttributeValue(htmlDocument.getElementsByAttributeValue("property", "og:description"), ArrayList::isEmpty);
             String name = getAttributeValue(htmlDocument.getElementsByAttributeValue("property", "og:title"), ArrayList::isEmpty);
             this.products.add(new Product(name, brand, color, price, description, id));
-
         }
     }
 
@@ -119,11 +124,21 @@ public class WebsiteParser {
     private Document getHtmlDocument(String url) throws IOException {
         Connection connection = Jsoup.connect(url).userAgent(USER_AGENT);
         Document htmlDocument = connection.get();
+        this.requestsAmount++;
         return htmlDocument;
     }
 
     public List<String> getProductLinks() {
         return this.productLinks;
+    }
+
+    public int getRequestsAmount() { return this.requestsAmount; }
+
+    public int getProductsAmount() { return this.products.size(); }
+
+    private void clearData() {
+        this.searchPagesLinks.clear();
+        this.productLinks.clear();
     }
 
 

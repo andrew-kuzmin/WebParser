@@ -8,7 +8,15 @@ public class ParserTest {
      * @param args - not used
      */
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
         SearchEngine searchEngine = new SearchEngine();
-        searchEngine.search("tom tailor denim");
+        searchEngine.search("new balance 574");
+        long endTime   = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        System.out.println("Amount of triggered HTTP request : " + searchEngine.getRequestsAmount());
+        System.out.println("Total memory : " + Runtime.getRuntime().totalMemory());
+        System.out.println("Amount of extracted products : " + searchEngine.getProductsAmount());
+        System.out.println("Run-time : " + (totalTime/1000d) + " seconds" );
+
     }
 }
