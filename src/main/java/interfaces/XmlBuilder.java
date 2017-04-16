@@ -17,17 +17,16 @@ import java.util.Set;
 public interface XmlBuilder {
     default void buildXml(Set<Offer> offers) {
         try {
-            DocumentBuilderFactory dbFactory =  DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.newDocument();
             // root element
             Element rootElement = doc.createElement("offers");
             doc.appendChild(rootElement);
             offers.forEach(offer -> {
-                Element offer1 = doc.createElement("offer");
+                Element finalOffer = doc.createElement("offer");
                 Element name = doc.createElement("name");
                 name.appendChild(doc.createTextNode(offer.getName()));
-                offer1.appendChild(name);
                 Element brand = doc.createElement("brand");
                 brand.appendChild(doc.createTextNode(offer.getBrand()));
                 Element color = doc.createElement("color");
@@ -42,15 +41,15 @@ public interface XmlBuilder {
                 articleId.appendChild(doc.createTextNode(offer.getArticleId()));
                 Element shippingCosts = doc.createElement("shippingCosts");
                 shippingCosts.appendChild(doc.createTextNode(offer.getShippingCosts()));
-
-                offer1.appendChild(brand);
-                offer1.appendChild(color);
-                offer1.appendChild(price);
-                offer1.appendChild(initialPrice);
-                offer1.appendChild(description);
-                offer1.appendChild(articleId);
-                offer1.appendChild(shippingCosts);
-                rootElement.appendChild(offer1);
+                finalOffer.appendChild(name);
+                finalOffer.appendChild(brand);
+                finalOffer.appendChild(color);
+                finalOffer.appendChild(price);
+                finalOffer.appendChild(initialPrice);
+                finalOffer.appendChild(description);
+                finalOffer.appendChild(articleId);
+                finalOffer.appendChild(shippingCosts);
+                rootElement.appendChild(finalOffer);
             });
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
@@ -59,16 +58,9 @@ public interface XmlBuilder {
             DOMSource source = new DOMSource(doc);
             File file = new File("offers.xml");
             StreamResult result = new StreamResult(file);
-
-            // Output to console for testing
-            // StreamResult result = new StreamResult(System.out);
-
             transformer.transform(source, result);
-
-            System.out.println("File saved!");
-
         } catch (Exception e) {
-
+            System.out.println("Error building XML");
         }
     }
 }

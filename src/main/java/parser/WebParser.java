@@ -29,6 +29,13 @@ public class WebParser implements Parser {
         return instance;
     }
 
+    /**
+     * Performs a page set parsing using concurrency.
+     *
+     * @param url - Page URL to parse.
+     *
+     * @param offers - Synchronized set of offers.
+     */
     @Override
     public void parse(String url, Set<Offer> offers) {
         ExecutorService executorService = Executors.newCachedThreadPool();
@@ -38,11 +45,9 @@ public class WebParser implements Parser {
                 // no search results
                 return;
             }
-            collectSearchPagesDocuments(url, startHtmlDocument);
+            collectSearchPagesDocuments(startHtmlDocument);
             this.searchPagesDocuments.parallelStream().forEach(this::collectOfferLinks);
-            executorService.execute(() -> {
-                parseOffers(offers);
-            });
+            executorService.execute(() -> parseOffers(offers));
             shutdownExecutorService(executorService);
             clearData();
         }
@@ -71,15 +76,13 @@ public class WebParser implements Parser {
         });
     }
 
-    private void collectSearchPagesDocuments(String url, Document htmlDocument) {
+    private void collectSearchPagesDocuments(Document htmlDocument) {
         this.searchPagesDocuments.add(htmlDocument);
         List<String> searchPagesReferences = getSearchPagesReferences(htmlDocument);
-        for (String ref : searchPagesReferences) {
-            Document document = getHtmlDocument(ref);
-            if (document != null) {
-                this.searchPagesDocuments.add(document);
-            }
-        }
+        searchPagesReferences.stream()
+                .map(this::getHtmlDocument)
+                .filter(Objects::nonNull)
+                .forEach(document -> this.searchPagesDocuments.add(document));
     }
 
     private void parseOffers(Set<Offer> offers) {
@@ -125,6 +128,7 @@ public class WebParser implements Parser {
         try {
             htmlDocument = connection.get();
         } catch (IOException e) {
+            System.out.println("Connection lost due to slow Internet connection");
         }
         this.requestsAmount++;
         if ((connection.response().statusCode() != 200) ||
@@ -134,6 +138,10 @@ public class WebParser implements Parser {
         return htmlDocument;
     }
 
+    /**
+     *
+     * @return amount of triggered HTTP requests.
+     */
     public int getRequestsAmount() {
         return this.requestsAmount;
     }
@@ -146,7 +154,7 @@ public class WebParser implements Parser {
     private void shutdownExecutorService(ExecutorService executorService){
         executorService.shutdown();
         try {
-            final boolean done = executorService.awaitTermination(1, TimeUnit.MINUTES);
+            executorService.awaitTermination(1, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
