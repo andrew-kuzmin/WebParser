@@ -1,6 +1,6 @@
-package util;
+import util.SearchEngineImpl;
 
-public class ParserTest {
+public class Starter {
 
     /**
      * This is our test. It creates a spider (which creates spider legs) and crawls the web.
@@ -9,9 +9,9 @@ public class ParserTest {
      */
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        SearchEngine searchEngine = new SearchEngine();
-        searchEngine.search("new balance 574");
-        long endTime   = System.currentTimeMillis();
+        SearchEngineImpl searchEngine = new SearchEngineImpl();
+        searchEngine.searchForKeyword("tom tailor denim");
+        long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
         System.out.println();
         System.out.println("Amount of triggered HTTP request : " + searchEngine.getRequestsAmount());
